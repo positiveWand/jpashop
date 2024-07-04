@@ -9,8 +9,11 @@ import my.practice.jpashop.domain.item.Item;
 import my.practice.jpashop.repository.ItemRepository;
 import my.practice.jpashop.repository.MemberRepository;
 import my.practice.jpashop.repository.OrderRepository;
+import my.practice.jpashop.repository.OrderSearch;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -55,7 +58,7 @@ public class OrderService {
     }
 
     // 주문 검색
-//    public List<Order> findOrders(OrderSearch orderSearch) {
-//        return orderRepository.findAll(orderSearch);
-//    }
+    public List<Order> findOrders(OrderSearch orderSearch) {
+        return orderRepository.findAll(orderSearch);
+    }
 }
