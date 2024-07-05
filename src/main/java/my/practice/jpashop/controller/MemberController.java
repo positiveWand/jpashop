@@ -42,4 +42,13 @@ public class MemberController {
         memberService.join(member);
         return "redirect:/";
     }
+
+    @GetMapping("/members")
+    public String list(Model model) {
+        // 엔티티를 그대로 사용하는 것은 바람직하지 않다
+        // View 전용 객체에 맵핑하는 것이 바람직
+        List<Member> members = memberService.findMembers();
+        model.addAttribute("members", members);
+        return "members/memberList";
+    }
 }
