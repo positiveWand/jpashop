@@ -3,7 +3,9 @@ package my.practice.jpashop.repository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
 import jakarta.persistence.criteria.*;
+import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import my.practice.jpashop.api.OrderSimpleApiController;
 import my.practice.jpashop.domain.Member;
 import my.practice.jpashop.domain.Order;
 import org.springframework.stereotype.Repository;
@@ -90,5 +92,15 @@ public class OrderRepository {
                         " join fetch o.member m" +
                         " join fetch o.delivery d", Order.class
         ).getResultList();
+    }
+
+    public List<SimpleOrderQueryDto> findOrderDtos() {
+        // new 명령어를 활용해 JPQL 결과를 DTO로 맵핑
+
+        return em.createQuery(
+                    "select new jpabook.jpashop.repository.OrderSimpleQueryDto(o.id, m.name, o.orderDate, o.status, d.address) o from Order o" +
+                    " join o.member m" +
+                    " join o.delivery d", SimpleOrderQueryDto.class)
+                .getResultList();
     }
 }

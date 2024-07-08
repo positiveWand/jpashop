@@ -7,6 +7,7 @@ import my.practice.jpashop.domain.Order;
 import my.practice.jpashop.domain.OrderStatus;
 import my.practice.jpashop.repository.OrderRepository;
 import my.practice.jpashop.repository.OrderSearch;
+import my.practice.jpashop.repository.SimpleOrderQueryDto;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -54,6 +55,13 @@ public class OrderSimpleApiController {
                 .collect(Collectors.toList());
 
         return result;
+    }
+
+    @GetMapping("/api/v4/simple-orders")
+    public List<SimpleOrderQueryDto> orderV4() {
+        // fetch join과 쿼리문이 유사하지만 정말 필요한만큼만 select하여 받아온다
+        // v3 vs v4: v4가 더 최적화되었지만 재사용성 감소 - 한정적인 사용
+        return orderRepository.findOrderDtos();
     }
 
     @Data
