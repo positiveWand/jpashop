@@ -1,8 +1,7 @@
-package my.practice.jpashop.repository;
+package my.practice.jpashop.repository.simplequery;
 
 import lombok.Data;
 import my.practice.jpashop.domain.Address;
-import my.practice.jpashop.domain.Order;
 import my.practice.jpashop.domain.OrderStatus;
 
 import java.time.LocalDateTime;
