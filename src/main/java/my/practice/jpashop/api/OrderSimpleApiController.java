@@ -43,6 +43,19 @@ public class OrderSimpleApiController {
         return result;
     }
 
+    @GetMapping("/api/v3/simple-orders")
+    public List<SimpleOrderDto> orderV3() {
+        // 1번의 fetch join 쿼리로 Order, Member, Delivery 모두 조회
+        // 연관객체를 이미 쿼리했기 때문에 지연로딩이 발생하지 않음 -> N+1 문제 해결
+        // SQL, 맵핑을 이용해 하는 방법보다 훨씬 간편
+        List<Order> orders = orderRepository.findAllWithMemberDelivery();
+        List<SimpleOrderDto> result = orders.stream()
+                .map(o -> new SimpleOrderDto(o))
+                .collect(Collectors.toList());
+
+        return result;
+    }
+
     @Data
     static class SimpleOrderDto {
         private Long orderId;
