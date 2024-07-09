@@ -49,6 +49,17 @@ public class OrderApiController {
         return collect;
     }
 
+    @GetMapping("/api/v3/orders")
+    public List<OrderDto> ordersV3() {
+        // fetch join을 활용해 로딩 -> 쿼리 개수 훨씬 감소
+        // 문제점 - 페이징 불가능(튜플 뻥튀기로 인해)
+        List<Order> orders = orderRepository.findAllWithItem();
+        List<OrderDto> result = orders.stream()
+                .map(o -> new OrderDto(o))
+                .collect(Collectors.toList());
+        return result;
+    }
+
     @Data
     static class OrderDto {
         private Long orderId;
