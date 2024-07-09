@@ -91,6 +91,16 @@ public class OrderRepository {
         ).getResultList();
     }
 
+    public List<Order> findAllWithMemberDelivery(int offset, int limit) {
+        return em.createQuery(
+                "select o from Order o" +
+                        " join fetch o.member m" +
+                        " join fetch o.delivery d", Order.class)
+                .setFirstResult(offset)
+                .setMaxResults(limit)
+                .getResultList();
+    }
+
     public List<Order> findAllWithItem() {
         // 객체가 중복되어 조회되는 것을 막기 위해 distinct 키워드를 JPQL 쿼리문에 추가해줘야한다
         // 하지만 Hibernate6에서는 기본으로 distinct 적용

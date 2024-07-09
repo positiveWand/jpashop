@@ -9,6 +9,7 @@ import my.practice.jpashop.domain.OrderStatus;
 import my.practice.jpashop.repository.OrderRepository;
 import my.practice.jpashop.repository.OrderSearch;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDateTime;
@@ -52,8 +53,25 @@ public class OrderApiController {
     @GetMapping("/api/v3/orders")
     public List<OrderDto> ordersV3() {
         // fetch join을 활용해 로딩 -> 쿼리 개수 훨씬 감소
-        // 문제점 - 페이징 불가능(튜플 뻥튀기로 인해)
+        // 문제점 - 결과 튜플 뻥튀기로 인해서... 중복 데이터로 인한 대역폭 낭비, 페이징 불가
         List<Order> orders = orderRepository.findAllWithItem();
+        List<OrderDto> result = orders.stream()
+                .map(o -> new OrderDto(o))
+                .collect(Collectors.toList());
+        return result;
+    }
+
+    @GetMapping("/api/v3.1/orders")
+    public List<OrderDto> ordersV3_paging(
+            @RequestParam(value = "offset", defaultValue = "1") int offset,
+            @RequestParam(value = "limit", defaultValue = "100") int limit
+    ) {
+        // ~ToOne에 있는 객체는 fetch join으로 조회 -> 페이징 쉽게 적용 가능
+        List<Order> orders = orderRepository.findAllWithMemberDelivery(offset, limit);
+        // 컬렉션 객체는 batch_fetch_size를 통해 설정한 size만큼 IN 쿼리로 조회 -> 연관된 객체를 지연로딩을 모아서 IN 쿼리를 이용해 가져옴
+        // v3에 비해 쿼리가 많지만 정말 필요한 정보만 쿼리
+        // 1+N 쿼리 -> 1+1 쿼리로 최적화
+        
         List<OrderDto> result = orders.stream()
                 .map(o -> new OrderDto(o))
                 .collect(Collectors.toList());
