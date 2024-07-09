@@ -69,6 +69,7 @@ public class OrderApiController {
         // ~ToOne에 있는 객체는 fetch join으로 조회 -> 페이징 쉽게 적용 가능
         List<Order> orders = orderRepository.findAllWithMemberDelivery(offset, limit);
         // 컬렉션 객체는 batch_fetch_size를 통해 설정한 size만큼 IN 쿼리로 조회 -> 연관된 객체를 지연로딩을 모아서 IN 쿼리를 이용해 가져옴
+        // 추가) Hibernate 6.2부터는 IN 절 대신 array_contains 함수를 사용한다
         // v3에 비해 쿼리가 많지만 정말 필요한 정보만 쿼리
         // 1+N 쿼리 -> 1+1 쿼리로 최적화
         
