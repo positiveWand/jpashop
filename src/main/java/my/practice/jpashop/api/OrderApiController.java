@@ -36,4 +36,52 @@ public class OrderApiController {
 
         return all;
     }
+
+    @GetMapping("/api/v2/orders")
+    public List<OrderDto> ordersV2() {
+        // 엔티티를 DTO로 변환
+        // 쿼리가 너무 많이 발생
+        List<Order> orders = orderRepository.findAllByString(new OrderSearch());
+        List<OrderDto> collect = orders.stream()
+                .map(o -> new OrderDto(o))
+                .collect(Collectors.toList());
+
+        return collect;
+    }
+
+    @Data
+    static class OrderDto {
+        private Long orderId;
+        private String name;
+        private LocalDateTime orderDate;
+        private OrderStatus orderStatus;
+        private Address address;
+//        private List<OrderItem> orderItems; // [BAD] DTO 선언시 엔티티 사용하면 의미 없어짐!
+        private List<OrderItemDto> orderItems; // [GOOD] 내부에 엔티티 대신 DTO 사용
+
+        public OrderDto(Order order) {
+            orderId = order.getId();
+            name = order.getMember().getName();
+            orderDate = order.getOrderDate();
+            orderStatus = order.getStatus();
+            address = order.getDelivery().getAddress();
+//            order.getOrderItems().stream().forEach(o -> o.getItem().getName());
+//            orderItems = order.getOrderItems();
+            orderItems = order.getOrderItems().stream()
+                    .map(orderItem -> new OrderItemDto(orderItem))
+                    .collect(Collectors.toList());
+        }
+    }
+
+    @Data
+    static class OrderItemDto {
+        private String itemName;
+        private int orderPrice;
+        private int count;
+        public OrderItemDto(OrderItem orderItem) {
+            itemName = orderItem.getItem().getName();
+            orderPrice = orderItem.getOrderPrice();
+            count = orderItem.getCount();
+        }
+    }
 }
