@@ -8,6 +8,8 @@ import my.practice.jpashop.domain.OrderItem;
 import my.practice.jpashop.domain.OrderStatus;
 import my.practice.jpashop.repository.OrderRepository;
 import my.practice.jpashop.repository.OrderSearch;
+import my.practice.jpashop.repository.order.query.OrderQueryDto;
+import my.practice.jpashop.repository.order.query.OrderQueryRepository;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -20,6 +22,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class OrderApiController {
     private final OrderRepository orderRepository;
+    private final OrderQueryRepository orderQueryRepository;
 
     @GetMapping("/api/v1/orders")
     public List<Order> ordersV1() {
@@ -77,6 +80,13 @@ public class OrderApiController {
                 .map(o -> new OrderDto(o))
                 .collect(Collectors.toList());
         return result;
+    }
+
+    @GetMapping("/api/v4/orders")
+    public List<OrderQueryDto> ordersV4() {
+        // 쿼리 결과를 DTO에 곧바로 맵핑
+        // 컬렉션(ToMany)을 조회하는 경우 N+1문제 발생
+        return orderQueryRepository.findOrderQueryDtos();
     }
 
     @Data

@@ -7,8 +7,8 @@ import my.practice.jpashop.domain.Order;
 import my.practice.jpashop.domain.OrderStatus;
 import my.practice.jpashop.repository.OrderRepository;
 import my.practice.jpashop.repository.OrderSearch;
-import my.practice.jpashop.repository.simplequery.SimpleOrderQueryDto;
-import my.practice.jpashop.repository.simplequery.SimpleOrderQueryRepository;
+import my.practice.jpashop.repository.order.simplequery.SimpleOrderQueryDto;
+import my.practice.jpashop.repository.order.simplequery.SimpleOrderQueryRepository;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 

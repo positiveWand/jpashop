@@ -1,4 +1,4 @@
-package my.practice.jpashop.repository.simplequery;
+package my.practice.jpashop.repository.order.simplequery;
 
 import lombok.Data;
 import my.practice.jpashop.domain.Address;
