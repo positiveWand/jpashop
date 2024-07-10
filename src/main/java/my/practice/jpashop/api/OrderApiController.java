@@ -89,6 +89,13 @@ public class OrderApiController {
         return orderQueryRepository.findOrderQueryDtos();
     }
 
+    @GetMapping("/api/v5/orders")
+    public List<OrderQueryDto> ordersV5() {
+        // 컬렉션으로 인해 추가 쿼리가 다수 발생하는 것 방지
+        // 별도의 쿼리를 사용하여 조회(Order 조회 1번 + OrderItem 조회 1번)
+        return orderQueryRepository.findAllByDto_optimization();
+    }
+
     @Data
     static class OrderDto {
         private Long orderId;
