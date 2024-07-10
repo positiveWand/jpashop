@@ -8,6 +8,8 @@ import my.practice.jpashop.domain.OrderItem;
 import my.practice.jpashop.domain.OrderStatus;
 import my.practice.jpashop.repository.OrderRepository;
 import my.practice.jpashop.repository.OrderSearch;
+import my.practice.jpashop.repository.order.query.OrderFlatDto;
+import my.practice.jpashop.repository.order.query.OrderItemQueryDto;
 import my.practice.jpashop.repository.order.query.OrderQueryDto;
 import my.practice.jpashop.repository.order.query.OrderQueryRepository;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -94,6 +96,27 @@ public class OrderApiController {
         // 컬렉션으로 인해 추가 쿼리가 다수 발생하는 것 방지
         // 별도의 쿼리를 사용하여 조회(Order 조회 1번 + OrderItem 조회 1번)
         return orderQueryRepository.findAllByDto_optimization();
+    }
+
+    @GetMapping("/api/v6/orders")
+    public List<OrderQueryDto> ordersV6() {
+        // 평탄화된(=비정규화된) 조회 결과 -> 쿼리 1개
+        List<OrderFlatDto> flatDtos = orderQueryRepository.findAllByDto_flat();
+
+        // 표준 DTO에 맵핑
+        return flatDtos.stream()
+                .collect(Collectors.groupingBy(o -> new OrderQueryDto(o.getOrderId(),
+                                o.getName(), o.getOrderDate(), o.getStatus(), o.getAddress()),
+                        Collectors.mapping(o -> new OrderItemQueryDto(o.getOrderId(),
+                                o.getItemName(), o.getOrderPrice(), o.getCount()), Collectors.toList())
+                )).entrySet().stream()
+                .map(e -> new OrderQueryDto(e.getKey().getOrderId(),
+                        e.getKey().getName(), e.getKey().getOrderDate(), e.getKey().getStatus(),
+                        e.getKey().getAddress(), e.getValue()))
+                .collect(Collectors.toList());
+
+        // 문제점1 - 애플리케이션에서 추가 작업 요구됨
+        // 문제점2 - (Order 기준) 페이징 불가능
     }
 
     @Data
