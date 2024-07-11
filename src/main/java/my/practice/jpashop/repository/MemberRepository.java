@@ -1,36 +1,10 @@
 package my.practice.jpashop.repository;
 
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
 import my.practice.jpashop.domain.Member;
-import org.springframework.stereotype.Repository;
+import org.springframework.data.jpa.repository.JpaRepository;
+
 import java.util.List;
 
-@Repository
-public class MemberRepository {
-    @PersistenceContext
-    private EntityManager em; // Spring이 EntityManager 생성 후 주입
-
-    // 엔티티 저장
-    public void save(Member member) {
-        em.persist(member);
-    }
-
-    // 엔티티 단건 검색 with ID
-    public Member findOne(Long id) {
-        return em.find(Member.class, id);
-    }
-    
-    // 엔티티 전체 검색
-    public List<Member> findAll() {
-        return em.createQuery("select m from Member m", Member.class)
-                .getResultList();
-    }
-
-    // 엔티티 검색 with 이름
-    public List<Member> findByName(String name) {
-        return em.createQuery("select m from Member m where m.name = :name", Member.class)
-                .setParameter("name", name)
-                .getResultList();
-    }
+public interface MemberRepository extends JpaRepository<Member, Long> {
+    List<Member> findByName(String name); // Spring Data JPA가 메서드 이름을 분석하여 알아서 JPQL 쿼리 생성
 }
